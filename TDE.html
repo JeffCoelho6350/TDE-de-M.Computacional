@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: rgb(174, 0, 255);
+            background-color: rgb(0, 140, 255);
             color: white;
         }
         table {
@@ -17,22 +17,22 @@
             width: 50%;
         }
         th, td {
-            border: 1px solid rgb(65, 0, 139);
+            border: 1px solid rgb(14, 0, 141);
             padding: 10px;
             text-align: center;
         }
         textarea, button {
             margin: 10px;
             padding: 8px;
-            background-color: rgb(228, 93, 255);
-            color: rgb(55, 0, 77);
+            background-color: rgb(93, 209, 255);
+            color: rgb(0, 1, 77);
             border: none;
         }
         textarea {
             width: 70%;
             height: 50px;
             resize: none;
-            background-color: white;
+            background-color: rgb(112, 210, 255);
         }
     </style>
 </head>
@@ -46,7 +46,7 @@
     
     <script>
         function avaliarProposicao(expr, valores) {
-            expr = expr.replace(/~/g, '!').replace(/∧/g, '&&').replace(/v/g, '||')
+            expr = expr.replace(/~/g, '!').replace(/∧/g, '&&').replace(/</g, '||')
                        .replace(/→/g, '|| !').replace(/<->/g, '==');
             return new Function(...Object.keys(valores), `return ${expr};`)(...Object.values(valores));
         }
