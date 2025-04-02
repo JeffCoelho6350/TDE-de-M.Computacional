@@ -25,7 +25,7 @@
             margin: 10px;
             padding: 8px;
             background-color: rgb(93, 209, 255);
-            color: rgb(0, 1, 77);
+            color: rgb(255, 255, 255);
             border: none;
         }
         textarea {
@@ -46,8 +46,8 @@
     
     <script>
         function avaliarProposicao(expr, valores) {
-            expr = expr.replace(/~/g, '!').replace(/∧/g, '&&').replace(/</g, '||')
-                       .replace(/→/g, '|| !').replace(/<->/g, '==');
+            expr = expr.replace(/~/g, '!').replace(/∧/g, '&').replace(/v/g, '|')
+                       .replace(/→/g, '||').replace(/<->/g, '==');
             return new Function(...Object.keys(valores), `return ${expr};`)(...Object.values(valores));
         }
 
@@ -73,9 +73,9 @@
 
         function classificarProposicao(resultados) {
             document.getElementById("classificacao").innerText =
-                resultados.every(r => r) ? "A proposição é uma tautologia." :
-                resultados.every(r => !r) ? "A proposição é uma contradição." :
-                "A proposição é uma contingência.";
+                resultados.every(r => r) ? "A proposição é uma Tautologia." :
+                resultados.every(r => !r) ? "A proposição é uma Contradição." :
+                "A proposição é uma Contingência.";
         }
     </script>
 </body>
