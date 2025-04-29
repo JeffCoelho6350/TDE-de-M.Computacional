@@ -46,7 +46,6 @@
         }
 
         button:hover {
-
             transform: scale(1.1);
             background-color: #fff;
             color: rgb(14, 0, 141);
@@ -62,33 +61,52 @@
     <table id="tabela"></table>
     
     <script>  
-        function avaliarProposicao(expr, valores) {  // aqui é uma função para avaliar a proposição lógica
-            expr = expr.replace(/~/g, '!').replace(/∧/g, '&').replace(/v/g, '|')
-                       .replace(/→/g, '||').replace(/<->/g, '==');
-            return new Function(...Object.keys(valores), `return ${expr};`)(...Object.values(valores));
+        function avaliarProposicao(expr, valores) {
+            expr = expr
+                .replace(/~/g, '!') // negação
+                .replace(/∧/g, '&&') // conjunção
+                .replace(/v/g, '||') // disjunção
+                .replace(/([a-zA-Z])\s*→\s*([a-zA-Z])/g, '!$1 || $2') // implicação
+                .replace(/([a-zA-Z])\s*<->\s*([a-zA-Z])/g, '$1 === $2'); // bicondicional
+
+            try {
+                return new Function(...Object.keys(valores), `return ${expr};`)(...Object.values(valores));
+            } catch (e) {
+                return false;
+            }
         }
 
-        function gerarTabela() {  // aqui é uma função para gerar a tabela-verdade
+        function gerarTabela() {
             const entrada = document.getElementById("proposicao").value.trim();
-            const variaveis = [...new Set(entrada.match(/[a-z]/gi))].sort();
-            if (!variaveis.length) { return alert("Proposição inválida, tente novamente.")};
-            
+
+            if (entrada === "") {
+                alert("Por favor, digite uma proposição lógica.");
+                return;
+            }
+
+            const matchVariaveis = entrada.match(/[a-z]/gi);
+            if (!matchVariaveis) {
+                alert("Proposição inválida, tente novamente.");
+                return;
+            }
+
+            const variaveis = [...new Set(matchVariaveis)].sort();
             const numLinhas = 2 ** variaveis.length;
             let resultados = [];
             let tabelaHTML = `<tr>${variaveis.map(v => `<th>${v}</th>`).join('')}<th>Resultado</th></tr>`;
-            
+
             for (let i = 0; i < numLinhas; i++) {
                 let valores = Object.fromEntries(variaveis.map((v, j) => [v, !!(i & (1 << (variaveis.length - 1 - j)))]));
                 let resultado = avaliarProposicao(entrada, valores);
                 resultados.push(resultado);
                 tabelaHTML += `<tr>${variaveis.map(v => `<td>${valores[v] ? "V" : "F"}</td>`).join('')}<td>${resultado ? "V" : "F"}</td></tr>`;
             }
-            
-            document.getElementById("tabela").innerHTML = tabelaHTML;  // aqui é onde a tabela-verdade é gerada e exibida
+
+            document.getElementById("tabela").innerHTML = tabelaHTML;
             classificarProposicao(resultados);
         }
 
-        function classificarProposicao(resultados) {  // aqui é uma função para classificar a proposição lógica
+        function classificarProposicao(resultados) {
             document.getElementById("classificacao").innerText =
                 resultados.every(r => r) ? "A proposição é uma Tautologia." :
                 resultados.every(r => !r) ? "A proposição é uma Contradição." :
